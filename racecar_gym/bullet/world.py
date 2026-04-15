@@ -86,6 +86,12 @@ class World(world.World):
         start_index = list(map(lambda agent: agent.id, self._agents)).index(agent.id)
         if mode == 'grid':
             strategy = AutomaticGridStrategy(obstacle_map=self._maps['obstacle'], number_of_agents=len(self._agents))
+        elif mode == 'fixed':
+            # Use pre-defined starting positions from starting_grid
+            start_pos = self._starting_grid[start_index % len(self._starting_grid)]
+            # start_pos is (x, y, heading), need (x, y, z) and (roll, pitch, yaw)
+            # Z=0.03 so wheels (radius=0.03) touch ground
+            return (start_pos[0], start_pos[1], 0.03), (0, 0, start_pos[2])
         elif mode == 'random':
             strategy = RandomPositioningStrategy(progress_map=self._maps['progress'],
                                                  obstacle_map=self._maps['obstacle'], alternate_direction=False)

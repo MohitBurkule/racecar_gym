@@ -2,6 +2,7 @@ from typing import Type
 from .task import Task
 from .progress_based import MaximizeProgressTask, RankDiscountedMaximizeProgressTask, MaximizeProgressRegularizeAction
 from .tracking import WaypointFollow
+from .go_to_point import GoToPointTask
 
 _registry = {}
 
@@ -17,3 +18,4 @@ register_task('maximize_progress', task=MaximizeProgressTask)
 register_task('maximize_progress_action_reg', task=MaximizeProgressRegularizeAction)
 register_task('maximize_progress_ranked', task=RankDiscountedMaximizeProgressTask)
 register_task('max_tracking', task=WaypointFollow)
+register_task('go_to_point', task=GoToPointTask)

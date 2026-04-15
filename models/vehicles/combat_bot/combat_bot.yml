@@ -1,0 +1,24 @@
+urdf_file: combat_bot.urdf
+
+actuators:
+  - type: differential_motor
+    name: motor_left
+    params:
+      max_velocity: 10.0
+      max_force: 10.0
+  - type: differential_motor
+    name: motor_right
+    params:
+      max_velocity: 10.0
+      max_force: 10.0
+
+sensors:
+  - type: external_camera
+    name: external_camera
+    frequency: 30
+    params:
+      position: [0, 0, 3.0]
+      target: [0, 0, 0]
+      gaussian_noise: [0.01, 0.01, 0.05]
+      delay_steps: 2
+      bounds: [2.7, 2.7, 6.283]

@@ -116,3 +116,30 @@ class SteeringWheel(BulletActuator[float]):
 
     def space(self) -> gymnasium.Space:
         return gymnasium.spaces.Box(low=-1.0, high=1.0, shape=(1,), dtype=np.float32)
+
+
+class DifferentialMotor(BulletActuator[float]):
+    @dataclass
+    class Config:
+        max_velocity: float
+        max_force: float
+
+    def __init__(self, name: str, config: Config):
+        super().__init__(name)
+        self._config = config
+
+    def control(self, velocity_ratio: float) -> None:
+        velocity_ratio = np.clip(velocity_ratio, -1, 1).item()
+        velocity = velocity_ratio * self._config.max_velocity
+        force = self._config.max_force
+
+        for index in self.joint_indices:
+            pybullet.setJointMotorControl2(
+                self.body_id, index,
+                pybullet.VELOCITY_CONTROL,
+                targetVelocity=velocity,
+                force=force
+            )
+
+    def space(self) -> gymnasium.Space:
+        return gymnasium.spaces.Box(low=-1.0, high=1.0, shape=(1,), dtype=np.float32)

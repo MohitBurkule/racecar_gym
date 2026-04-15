@@ -1,4 +1,5 @@
 from abc import ABC
+from collections import deque
 from dataclasses import dataclass
 from typing import Any, TypeVar, Tuple, Union
 
@@ -290,3 +291,42 @@ class PoseSensor(BulletSensor[np.ndarray]):
         if self._config.debug:
             print(f'[DEBUG][gps] pose: {[round(v, 2) for v in pose]}')
         return pose
+
+
+class ExternalCameraSensor(BulletSensor[np.ndarray]):
+    @dataclass
+    class Config:
+        position: Tuple[float, float, float]
+        target: Tuple[float, float, float]
+        gaussian_noise: Tuple[float, float, float]
+        delay_steps: int
+        bounds: Tuple[float, float, float]
+        debug: bool = False
+
+    def __init__(self, name: str, type: str, config: Config):
+        super().__init__(name, type)
+        self._config = config
+        self._delay_buffer = deque(maxlen=config.delay_steps + 1)
+        self._step_count = 0
+
+    def space(self) -> gymnasium.Space:
+        high = np.array(self._config.bounds)
+        low = -high
+        return gymnasium.spaces.Box(low=low, high=high, dtype=np.float64)
+
+    def observe(self) -> np.ndarray:
+        position, orientation = p.getBasePositionAndOrientation(self.body_id)
+        heading = p.getEulerFromQuaternion(orientation)[2]
+        pose = np.array([position[0], position[1], heading])
+
+        # Add Gaussian noise
+        noise = np.random.normal(0, self._config.gaussian_noise, size=3)
+        noisy_pose = pose + noise
+
+        # Handle delay
+        self._delay_buffer.append(noisy_pose)
+        self._step_count += 1
+
+        if self._step_count <= self._config.delay_steps:
+            return noisy_pose
+        return self._delay_buffer[0]

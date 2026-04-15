@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version="1.6">
+  <world name="square_arena">
+    <gravity>0 0 -9.81</gravity>
+
+    <!-- Floor (visual only) -->
+    <model name="floor">
+      <static>1</static>
+      <pose>0 0 0 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>10 10</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.4 0.4 0.4 1</ambient>
+            <diffuse>0.4 0.4 0.4 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Walls (5m x 5m arena, 0.3m inner obstacle) -->
+    <model name="walls">
+      <static>1</static>
+      <pose>0 0 0 0 0 0</pose>
+      <link name="link">
+
+        <!-- North wall -->
+        <collision name="north">
+          <pose>0 2.5 0.05 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5.0 0.1 0.1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="north_visual">
+          <pose>0 2.5 0.05 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5.0 0.1 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.2 0.2 0.3 1</ambient>
+            <diffuse>0.2 0.2 0.3 1</diffuse>
+          </material>
+        </visual>
+
+        <!-- South wall -->
+        <collision name="south">
+          <pose>0 -2.5 0.05 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5.0 0.1 0.1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="south_visual">
+          <pose>0 -2.5 0.05 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5.0 0.1 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.2 0.2 0.3 1</ambient>
+            <diffuse>0.2 0.2 0.3 1</diffuse>
+          </material>
+        </visual>
+
+        <!-- East wall -->
+        <collision name="east">
+          <pose>2.5 0 0.05 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.1 5.0 0.1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="east_visual">
+          <pose>2.5 0 0.05 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.1 5.0 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.2 0.2 0.3 1</ambient>
+            <diffuse>0.2 0.2 0.3 1</diffuse>
+          </material>
+        </visual>
+
+        <!-- West wall -->
+        <collision name="west">
+          <pose>-2.5 0 0.05 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.1 5.0 0.1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="west_visual">
+          <pose>-2.5 0 0.05 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.1 5.0 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.2 0.2 0.3 1</ambient>
+            <diffuse>0.2 0.2 0.3 1</diffuse>
+          </material>
+        </visual>
+
+        <!-- Inner Obstacle (0.3m x 0.3m) -->
+        <collision name="inner">
+          <pose>0 0 0.05 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.3 0.3 0.1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="inner_visual">
+          <pose>0 0 0.05 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.3 0.3 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.6 0.3 0.1 1</ambient>
+            <diffuse>0.6 0.3 0.1 1</diffuse>
+          </material>
+        </visual>
+
+      </link>
+    </model>
+  </world>
+</sdf>

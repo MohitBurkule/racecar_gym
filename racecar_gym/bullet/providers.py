@@ -5,11 +5,12 @@ import zipfile
 from typing import List, Tuple
 
 from racecar_gym import core
-from racecar_gym.bullet.actuators import BulletActuator, Motor, SteeringWheel, Speed
+from racecar_gym.bullet.actuators import BulletActuator, Motor, SteeringWheel, Speed, DifferentialMotor
 from racecar_gym.bullet.configs import SensorConfig, VehicleConfig, ActuatorConfig, SceneConfig
-from racecar_gym.bullet.sensors import Lidar, PoseSensor, AccelerationSensor, VelocitySensor, RGBCamera, BulletSensor, \
+from racecar_gym.bullet.sensors import Lidar, PoseSensor, AccelerationSensor, VelocitySensor, RGBCamera, ExternalCameraSensor, BulletSensor, \
     FixedTimestepSensor
 from racecar_gym.bullet.vehicle import RaceCar
+from racecar_gym.bullet.combat_bot import CombatBot
 from .world import World
 from ..core.agent import Agent
 from racecar_gym.core.specs import VehicleSpec, WorldSpec
@@ -28,6 +29,8 @@ def load_sensor(config: SensorConfig) -> BulletSensor:
         return VelocitySensor(name=config.name, type=config.type, config=VelocitySensor.Config(**config.params))
     if config.type == 'rgb_camera':
         return RGBCamera(name=config.name, type=config.type, config=RGBCamera.Config(**config.params))
+    if config.type == 'external_camera':
+        return ExternalCameraSensor(name=config.name, type=config.type, config=ExternalCameraSensor.Config(**config.params))
 
 
 def load_actuator(config: ActuatorConfig) -> BulletActuator:
@@ -37,6 +40,8 @@ def load_actuator(config: ActuatorConfig) -> BulletActuator:
         return Speed(name=config.name, config=Speed.Config(**config.params))
     if config.type == 'steering':
         return SteeringWheel(name=config.name, config=SteeringWheel.Config(**config.params))
+    if config.type == 'differential_motor':
+        return DifferentialMotor(name=config.name, config=DifferentialMotor.Config(**config.params))
 
 
 def _compute_color(name: str) -> Tuple[float, float, float, float]:
@@ -74,8 +79,14 @@ def load_vehicle(spec: VehicleSpec) -> core.Vehicle:
     actuators = list(filter(lambda a: a.name in requested_actuators, config.actuators))
     actuators = [load_actuator(config=c) for c in actuators]
 
-    car_config = RaceCar.Config(urdf_file=config.urdf_file, color=_compute_color(config.color))
-    vehicle = RaceCar(sensors=sensors, actuators=actuators, config=car_config)
+    # Choose vehicle class based on spec name
+    if spec.name == 'combat_bot':
+        vehicle_class = CombatBot
+    else:
+        vehicle_class = RaceCar
+
+    vehicle_config = vehicle_class.Config(urdf_file=config.urdf_file, color=_compute_color(config.color))
+    vehicle = vehicle_class(sensors=sensors, actuators=actuators, config=vehicle_config)
     return vehicle
 
 
