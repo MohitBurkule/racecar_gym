@@ -42,7 +42,7 @@ class Motor(BulletActuator[Tuple[float, float]]):
         self._config = config
 
     def control(self, acceleration: float) -> None:
-        acceleration = np.clip(acceleration, -1, +1)
+        acceleration = np.clip(acceleration, -1, +1).item()
         if acceleration < 0:
             velocity = 0
         else:
@@ -75,7 +75,7 @@ class Speed(BulletActuator[Tuple[float, float]]):
 
     def control(self, target_speed: float) -> None:
         """ target_speed is assumed to be mapped from [0,max_velocity] to [-1, +1]"""
-        target_speed = np.clip(target_speed, -1, +1)  # sanity check
+        target_speed = np.clip(target_speed, -1, +1).item()  # sanity check
         target_speed = (target_speed + 1.0) / 2.0 * self._config.max_velocity  # convert to actual range
 
         velocity = target_speed * self._config.velocity_multiplier
@@ -104,6 +104,7 @@ class SteeringWheel(BulletActuator[float]):
         self._config = config
 
     def control(self, command: float) -> None:
+        command = np.asarray(command).item() if hasattr(command, 'item') else float(command)
         angle = command * self._config.max_steering_angle * self._config.steering_multiplier
         for joint in self.joint_indices:
             pybullet.setJointMotorControl2(
